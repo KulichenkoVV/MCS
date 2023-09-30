@@ -34,11 +34,20 @@ typedef enum
 	DMYTRO,
 	ALGO_ALL
 }algorithm_e_t;
+
+typedef enum
+{
+	STEP_1,
+	STEP_2,
+	STEP_3,
+	STEP_4,
+	STEP_ALL
+}algorithm_steps_e_t;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define COUNTER_DELAY_MAX 10
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -75,6 +84,8 @@ typedef struct
 
 algorithm_e_t algorithm = TETIANA;
 button_state_e_t button_state = BUTTON_UNPRESS;
+algorithm_steps_e_t algorithm_steps = STEP_1;
+uint8_t counter_delay = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -162,20 +173,53 @@ int main(void)
 			case TETIANA:
 			{
 				/* From Tetyana */
-				HAL_Delay(500);
-				HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET);
-				HAL_GPIO_WritePin(LED_ORANGE_GPIO_Port, LED_ORANGE_Pin, GPIO_PIN_SET);
-				HAL_Delay(500);
-				HAL_GPIO_WritePin(LED_ORANGE_GPIO_Port, LED_ORANGE_Pin, GPIO_PIN_RESET);
-				HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
-				HAL_Delay(500);
-				HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_RESET);
-				HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_SET);
-				HAL_Delay(500);
-				HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
-				HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);
+				HAL_Delay(100);
+				counter_delay ++;
+				if (counter_delay == COUNTER_DELAY_MAX)
+				{
+					counter_delay = 0;
+					// ALGORITH SWITCH
+					switch (algorithm_steps)
+					{
+						case STEP_1: 
+						{
+							HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET);
+							HAL_GPIO_WritePin(LED_ORANGE_GPIO_Port, LED_ORANGE_Pin, GPIO_PIN_SET);
+							
+							break;
+						}
+						case STEP_2:
+						{
+							HAL_GPIO_WritePin(LED_ORANGE_GPIO_Port, LED_ORANGE_Pin, GPIO_PIN_RESET);
+							HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
+							
+							break;
+						}
+						case STEP_3:
+						{
+							HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_RESET);
+							HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_SET);
+							
+							break;
+						}
+						case STEP_4:
+						{
+							HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
+							HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);
+							
+							break;
+						}
+						default:
+							break;
+					}
 				
-				break;
+					algorithm_steps++;
+					if (algorithm_steps == STEP_ALL)
+					{
+						algorithm_steps = STEP_1;
+					}
+				}
+				break; // Tetiana
 			}
 			case ANASTASIIA:
 			{
